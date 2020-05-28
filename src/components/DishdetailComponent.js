@@ -31,6 +31,7 @@ class DishDetail extends Component {
                     <ul className="list-unstyled" key={comment.id}>
                         <li>{comment.comment}</li>
                         <li>-- {comment.author}, {month} {date.getDate()}, {date.getFullYear()}</li>
+                        <br></br>
                     </ul>
                 );
             });
