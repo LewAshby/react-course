@@ -3,11 +3,7 @@ import { Card, CardImg, CardImgOverlay, CardText, CardBody, CardTitle, ListGroup
 
 class DishDetail extends Component {
 
-    constructor(props) {
-        super(props);
-    }
-
-    renderDish(dish) {
+   renderDish(dish) {
         if (dish){
             return (
                 <Card>
@@ -23,14 +19,12 @@ class DishDetail extends Component {
 
     renderComments(comments) {
         if (comments.length !== 0) {
-            const formatter = new Intl.DateTimeFormat('en', { month: 'short' });
+            const formatter = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: '2-digit' });
             const commentsAll = comments.map(comment => {
-                const date = new Date(comment.date);
-                const month = formatter.format(new Date(comment.date));
                 return (
                     <ul className="list-unstyled" key={comment.id}>
                         <li>{comment.comment}</li>
-                        <li>-- {comment.author}, {month} {date.getDate()}, {date.getFullYear()}</li>
+                        <li>-- {comment.author}, {formatter.format(new Date(comment.date))} </li>
                         <br></br>
                     </ul>
                 );
@@ -52,16 +46,17 @@ class DishDetail extends Component {
     }
 
     render() {
-        const {selectedDish} = this.props;
-        console.log(selectedDish)
+        const {dish} = this.props;
         return (
-            <div className="row">
-                <div className="col-12 col-md-5 m-1">
-                    {this.renderDish(selectedDish)}
+            <div className="container">
+                <div className="row">
+                    <div className="col-12 col-md-5 m-1">
+                        {this.renderDish(dish)}
+                    </div>
+                    <ListGroup className="col-12 col-md-5 m-1">
+                        {dish ? this.renderComments(dish.comments) : ''}
+                    </ListGroup>
                 </div>
-                <ListGroup className="col-12 col-md-5 m-1">
-                    {selectedDish ? this.renderComments(selectedDish.comments) : ''}
-                </ListGroup>
             </div>
         )
     }
