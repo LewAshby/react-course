@@ -1,6 +1,91 @@
-import React from 'react';
-import { Card, CardImg, CardText, CardBody, CardTitle, ListGroup, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import React, { Component } from 'react';
+import { Card, CardImg, CardText, CardBody, CardTitle, 
+        ListGroup, Breadcrumb, BreadcrumbItem, Modal, 
+        ModalHeader, ModalBody, Label, Button, FormGroup } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { Control, LocalForm, Errors } from 'react-redux-form'
+
+const minLength = (len) => (value) => (value) && (value.length >= len);
+const maxLength = (len) => (value) => !(value) || (value.length <= len);
+
+class CommentForm extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            isModalOpen: false
+        }
+
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.toggleModal = this.toggleModal.bind(this);
+    }
+
+    handleSubmit(values) {
+        console.log("Current state is: " + JSON.stringify(values));
+        alert("Current state is: " + JSON.stringify(values));
+        this.setState({
+            isModalOpen: false
+        })
+    }
+
+    toggleModal() {
+        this.setState({
+            isModalOpen: !this.state.isModalOpen
+        });
+    }
+
+    render() {
+        return(            
+            <>
+                <Button outline onClick={this.toggleModal}>
+                    <span class="fa fa-pencil fa-lg" aria-hidden="true"></span> Submit Comment
+                </Button>
+                <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+                    <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
+                    <ModalBody>
+                        
+                        <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
+                            <FormGroup>
+                                <Label htmlFor="rating">Rating</Label>
+                                <Control.select model=".rating" id="rating" name="rating"
+                                    placeholder="First Name"
+                                    className="form-control">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </Control.select>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label htmlFor="fullname">Your Name</Label>
+                                <Control.text model=".fullname" id="fullname" name="fullname"
+                                    placeholder="Your Name"
+                                    className="form-control"
+                                    validators={{minLength: minLength(3), maxLength: maxLength(15)}} />
+                                <Errors className="text-danger" model=".fullname" show="touched"
+                                    messages={{
+                                        required: 'Required',
+                                        minLength: 'Must be greater than 2 characters',
+                                        maxLength: 'Must be 15 characters or less'
+                                    }} />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label htmlFor="comment">Comment</Label>
+                                <Control.textarea model=".comment" id="comment" name="comment"
+                                    className="form-control" />
+                            </FormGroup>
+                            <FormGroup>
+                                <Button type="submit" color="primary">Submit</Button>
+                            </FormGroup>
+                        </LocalForm>
+                    </ModalBody>
+                </Modal>
+            </>
+        );
+    }
+}
 
 function RenderDish({dish}) {
     if (dish){
@@ -33,6 +118,7 @@ function RenderComments({comments}) {
             <div>
                 <h4>Comments</h4>
                 {commentsAll}
+                <CommentForm/>
             </div>
         )
     }
