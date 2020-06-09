@@ -22,11 +22,8 @@ class CommentForm extends Component {
     }
 
     handleSubmit(values) {
-        console.log("Current state is: " + JSON.stringify(values));
-        alert("Current state is: " + JSON.stringify(values));
-        this.setState({
-            isModalOpen: false
-        })
+        this.toggleModal();
+        this.props.addComment(this.props.dishId, values.rating, values.author, values.comment)
     }
 
     toggleModal() {
@@ -49,7 +46,6 @@ class CommentForm extends Component {
                             <FormGroup>
                                 <Label htmlFor="rating">Rating</Label>
                                 <Control.select model=".rating" id="rating" name="rating"
-                                    placeholder="First Name"
                                     className="form-control">
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -59,12 +55,12 @@ class CommentForm extends Component {
                                 </Control.select>
                             </FormGroup>
                             <FormGroup>
-                                <Label htmlFor="fullname">Your Name</Label>
-                                <Control.text model=".fullname" id="fullname" name="fullname"
+                                <Label htmlFor="author">Your Name</Label>
+                                <Control.text model=".author" id="author" name="author"
                                     placeholder="Your Name"
                                     className="form-control"
                                     validators={{minLength: minLength(3), maxLength: maxLength(15)}} />
-                                <Errors className="text-danger" model=".fullname" show="touched"
+                                <Errors className="text-danger" model=".author" show="touched"
                                     messages={{
                                         required: 'Required',
                                         minLength: 'Must be greater than 2 characters',
@@ -101,7 +97,7 @@ function RenderDish({dish}) {
     }
 }
 
-function RenderComments({comments}) {
+function RenderComments({comments, addComment, dishId}) {
     if (comments.length !== 0) {
         const formatter = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: '2-digit' });
         const commentsAll = comments.map(comment => {
@@ -118,7 +114,7 @@ function RenderComments({comments}) {
             <div>
                 <h4>Comments</h4>
                 {commentsAll}
-                <CommentForm/>
+                <CommentForm dishId={dishId} addComment={addComment} />
             </div>
         )
     }
@@ -145,7 +141,7 @@ const DishDetail = (props) => {
                     <RenderDish dish={props.dish} />
                 </div>
                 <ListGroup className="col-12 col-md-5 m-1">
-                    <RenderComments comments={props.comments} />
+                    <RenderComments comments={props.comments} addComment={props.addComment} dishId={props.dish.id} />
                 </ListGroup>
             </div>
         </div>
