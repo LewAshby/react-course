@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form'
 import { Loading } from './LoadingComponent';
 import { baseUrl } from '../shared/baseUrl';
+import { FadeTransform, Fade, Stagger } from 'react-animation-components';
 
 const minLength = (len) => (value) => (value) && (value.length >= len);
 const maxLength = (len) => (value) => !(value) || (value.length <= len);
@@ -88,6 +89,10 @@ class CommentForm extends Component {
 function RenderDish({dish}) {
     if (dish){
         return (
+            <FadeTransform in  
+                transformProps={{
+                    exitTransform: 'scale(0.5) translateY(-50%)'
+                }}>
             <Card>
                 <CardImg width="100%" src={baseUrl + dish.image} alt={dish.name} />
                 <CardBody>
@@ -95,6 +100,7 @@ function RenderDish({dish}) {
                     <CardText>{dish.description}</CardText>
                 </CardBody>
             </Card>
+            </FadeTransform>
         );
     }
 }
@@ -105,8 +111,10 @@ function RenderComments({comments, postComment, dishId}) {
         const commentsAll = comments.map(comment => {
             return (
                 <ul className="list-unstyled" key={comment.id}>
-                    <li>{comment.comment}</li>
-                    <li>-- {comment.author}, {formatter.format(new Date(comment.date))} </li>
+                    <Fade in>
+                        <li>{comment.comment}</li>
+                        <li>-- {comment.author}, {formatter.format(new Date(comment.date))} </li>
+                    </Fade>
                     <br></br>
                 </ul>
             );
@@ -115,7 +123,9 @@ function RenderComments({comments, postComment, dishId}) {
         return (
             <div>
                 <h4>Comments</h4>
-                {commentsAll}
+                <Stagger in>
+                    {commentsAll}
+                </Stagger>
                 <CommentForm dishId={dishId} postComment={postComment} />
             </div>
         )
